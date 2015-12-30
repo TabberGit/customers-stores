@@ -7,10 +7,15 @@ logging:
 endpoints:
   health:
     sensitive: false
+
 eureka:
   instance:
+    hostname: 10.200.32.42
     leaseRenewalIntervalInSeconds: 10
   client:
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
+    eureka-server-port: 8761
     registryFetchIntervalSeconds: 5
 
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000

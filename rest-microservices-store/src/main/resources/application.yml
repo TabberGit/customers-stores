@@ -1,41 +1,58 @@
 server:
-  port: 0
-
-
-endpoints:
-  restart:
-    enabled: true
-  shutdown:
-    enabled: true
-  health:
-    sensitive: false
+  port: 8080
 
 spring:
   data:
     mongodb:
-      uri: ${vcap.services.${PREFIX:}mongodb.credentials.uri:mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/stores}
+      uri: mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/stores
   rabbitmq:
-#    addresses: ${vcap.services.${PREFIX:}rabbitmq.credentials.uri:amqp://${RABBITMQ_HOST:localhost}:${RABBITMQ_PORT:5672}}
-    host: ${WORKPC_HOST}
-    port: 5655
-    username: bout01
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
 #    password: nmwrKv6vG8RIKk6R8MnnIQ==
-    password: Password2015
+    password: ${RABBITMQ_PASSWORD}
+  cloud:
+    stream:
+       bindings:
+         springCloudBusInput:
+           group: stores.${spring.cloud.client.hostname}.${server.port}
+
+#endpoints:
+#  restart:
+#    enabled: true
+#  shutdown:
+#    enabled: true
+#  health:
+#    sensitive: false
+
+##
+## If we want to run off of the defaults in a given context, the three of the following properties must be unique and must agree
+##
+## eureka.instance.instanceId=127.0.0.1:customers:8080
+## eureka.instance.ip-address=127.0.0.1
+## eureka.instance.hostname=127.0.0.1
+##
+## NOTE: The PORTS must be unique across various ips representing the same box! If not, Hystrix will not function properly.
+## Without a unique ip/port Eureka/Hystrix will not perform as expected on a dev box.  (ie, just having localhost:9000 and localhost:9001 will not work;
+##              instead, use localhost:9000 and 127.0.0.1:9001)
+##
+##
 
 eureka:
   instance:
-    instance-id: ${LOCAL_HOST}:stores:9000
-    ip-address: ${LOCAL_HOST}
-    hostname: ${LOCAL_HOST}
+    instance-id: ${HOST_IP:spring.cloud.client.hostname}:customers:${server.port:9000}
+    ip-address: ${HOST_IP:spring.cloud.client.hostname}
+    hostname: ${HOST_IP:spring.cloud.client.hostname}
     leaseRenewalIntervalInSeconds: 10
-    metadataMap:
-      instanceId: ${LOCAL_HOST}:stores:9000
-#      instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
   client:
     service-url:
-      defaultZone: http://${WORKPC_HOST}:${eureka.client.eureka-server-port}/eureka/
+      defaultZone: http://${EUREKA_IP-ADDRESS}:${eureka.client.eureka-server-port}/eureka/
+    region: default
     eureka-server-port: 8761
     registryFetchIntervalSeconds: 5
+    availabilityZones: 
+      default: ${APPLICATION_DOMAIN:${DOMAIN:defaultZone}}
+    
 
 logging:
   level:

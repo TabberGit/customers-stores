@@ -3,6 +3,6 @@ spring:
     name: customersui
   cloud:
     config:
-     uri: ${vcap.services.${PREFIX:}configserver.credentials.uri:${CONFIG_SERVER_URI:http://localhost:8888}}
+     uri: ${vcap.services.${PREFIX:}configserver.credentials.uri:${CONFIG_SERVER_URI:http://10.12.11.84:8888}}
      failFast: true
       
