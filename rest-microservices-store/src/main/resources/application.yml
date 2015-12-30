@@ -46,7 +46,7 @@ eureka:
     leaseRenewalIntervalInSeconds: 10
   client:
     service-url:
-      defaultZone: http://${EUREKA_IP-ADDRESS}:${eureka.client.eureka-server-port}/eureka/
+      defaultZone: http://${EUREKA_IP_ADDRESS}:${eureka.client.eureka-server-port}/eureka/
     region: default
     eureka-server-port: 8761
     registryFetchIntervalSeconds: 5
